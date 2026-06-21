@@ -117,14 +117,7 @@ git commit -m "report: gold price outlook YYYY-MM-DD"
 
 **4c — Send LINE notification**
 
-Send a direct HTTPS POST to `https://api.line.me/v2/bot/message/push`.
-- Read `LINE_ACCESS_TOKEN` and `LINE_USER_ID` from environment variables — abort with a clear error message if either is missing.
-- Use the WebFetch tool (POST method) with:
-  - Header `Authorization: Bearer <LINE_ACCESS_TOKEN>`
-  - Header `Content-Type: application/json`
-  - Body: `{"to": "<LINE_USER_ID>", "messages": [{"type": "text", "text": "<summary>"}]}`
-
-The `<summary>` text must be ≤ 500 characters and follow this template:
+Build the `<summary>` text (≤ 500 characters) using this template:
 ```
 🪙 Thailand Gold Outlook YYYY-MM-DD
 Direction: ▲ UP / ▼ DOWN / ➡ SIDEWAYS
@@ -135,5 +128,17 @@ Confidence: High/Medium/Low
 Sources: YLG · GTA · <global>
 ```
 
-If LINE_ACCESS_TOKEN or LINE_USER_ID are not set, print a warning but do NOT skip the rest of the workflow — still write and commit the report.
+Then run the helper script in this skill folder:
+```
+python3 claude/skills/gold-price-outlook/send_line.py "<summary>"
+```
+
+The script (`send_line.py`) reads `LINE_ACCESS_TOKEN` and `LINE_USER_ID` from
+environment variables and POSTs to `https://api.line.me/v2/bot/message/push`
+using Python's `urllib.request` (no external dependencies). It prints the LINE
+API response status and exits non-zero on failure.
+
+If `LINE_ACCESS_TOKEN` or `LINE_USER_ID` are not set, the script will print an
+error to stderr and exit 1. In that case print a warning but do NOT skip the
+rest of the workflow — still write and commit the report.
 </instructions>
