@@ -107,13 +107,18 @@ Report structure:
 - [Source name](URL)
 ```
 
-**4b — Commit the report**
+**4b — Commit and push the report**
 
-Stage only the new report file and commit:
+Stage only the new report file, commit, then push immediately so the report
+is not lost if the session ends:
 ```
 git add reports/YYYY-MM-DD.md
 git commit -m "report: gold price outlook YYYY-MM-DD"
+git push origin main
 ```
+
+If the push fails, retry up to 3 times with a short wait between attempts.
+Report the final push status to the user.
 
 **4c — Send LINE notification**
 
