@@ -132,7 +132,7 @@ script in step 4c handles commit, push, and LINE in one call.
 
 **4c — Commit, push, and send LINE notification**
 
-Build the `<summary>` text (≤ 500 characters) using this template:
+Build the `<summary>` text (≤ 1000 characters) using this template:
 ```
 🪙 Thailand Gold — Today's Prediction YYYY-MM-DD
 Direction: ▲ UP / ▼ DOWN / ➡ SIDEWAYS
@@ -140,10 +140,15 @@ Confidence: High/Medium/Low
 
 <2-3 sentence reason focused on what gold will do TODAY>
 
-Agent accuracy (last 3 days): ✅/❌/🏖 · ✅/❌/🏖 · ✅/❌/🏖
+📊 Agent Performance (Past 3 Days)
+Day-3 YYYY-MM-DD: Predicted <UP/DOWN/SIDEWAYS> → Actual <▲ UP / ▼ DOWN / ➡ SIDEWAYS / 🏖> (<change detail>) <✅/❌/🏖>
+Day-2 YYYY-MM-DD: Predicted <UP/DOWN/SIDEWAYS> → Actual <▲ UP / ▼ DOWN / ➡ SIDEWAYS / 🏖> (<change detail>) <✅/❌/🏖>
+Day-1 YYYY-MM-DD: Predicted <UP/DOWN/SIDEWAYS> → Actual <▲ UP / ▼ DOWN / ➡ SIDEWAYS / 🏖> (<change detail>) <✅/❌/🏖>
 
 Sources: YLG · GTA · <global>
 ```
+
+Where `<change detail>` is a short note like `+850 baht to 63,900` or `−1,300 baht to 63,050` or `Market Closed`.
 
 Then run this single command — it commits and pushes the report file AND sends
 the LINE notification in one step:
