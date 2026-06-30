@@ -37,31 +37,41 @@ You are running the daily Thailand gold-price outlook workflow. Follow each phas
 Search the web for:
 - Today's Thailand gold price forecast / outlook (use Thai and English queries).
 - Gold Traders Association of Thailand (สมาคมค้าทองคำ) latest price announcement.
-- YLG Bullion & Futures daily gold outlook.
+- YLG Bullion & Futures daily gold outlook for **today** specifically.
 - Any major Thai financial news gold articles published today.
 
 Record every source URL you find.
 
 ### Phase 2 — ANALYZE
 
-**Price alignment check**
+**Price alignment check (yesterday's facts)**
 - Find yesterday's closing Thailand gold price (baht/baht-weight, i.e. บาทละ).
 - Find yesterday's closing global spot gold price (XAU/USD).
 - State explicitly: did they move in the same direction vs the day before?
+- If yesterday was a market holiday or weekend, note "Market Closed" instead of a price.
 
 **Three-source view collection**
-Collect the current outlook/prediction from exactly 3 sources — at least one Thai, at least one global:
+Collect each source's prediction for **today** (not the coming week) — at least one Thai, at least one global:
 1. YLG Bullion (Thai) — https://ylg.co.th
 2. Gold Traders Association of Thailand — https://goldtraders.or.th
 3. One global source: World Gold Council, Kitco, Reuters Gold, or Bloomberg Commodities.
 
-For each source, also check what they predicted for the previous 3 days and whether the actual price movement confirmed or contradicted the prediction. Summarise each as ✅ Correct, ❌ Wrong, or ❓ Unclear.
+For each source, also check what they predicted for the previous 3 days and whether the actual price movement that day confirmed or contradicted the prediction. Summarise each as ✅ Correct, ❌ Wrong, ❓ Unclear, or 🏖 Market Closed.
+
+**Agent self-performance check**
+Read the last 3 daily report files from the `reports/` folder (e.g. `reports/YYYY-MM-DD.md` for Day-3, Day-2, Day-1 relative to today). For each:
+- Extract the **Direction** this skill predicted on that day (UP / DOWN / SIDEWAYS).
+- Find the **actual Thailand gold price movement** for that day (vs the prior trading day).
+- Score as ✅ Correct, ❌ Incorrect, 🏖 Market Closed, or ❓ Unclear.
+
+If a report file does not exist for a given day (e.g. weekend or missed run), mark as 🏖 Market Closed or ❓ No report.
 
 ### Phase 3 — SYNTHESIZE
 
+The direction call must answer: **"What will Thailand gold do TODAY (YYYY-MM-DD)?"**
 Write a SHORT conclusion (≤ 5 bullet points):
-- Overall direction call: **UP** or **DOWN** (or SIDEWAYS if truly unclear).
-- Key supporting reasons (price level, trend, macro drivers).
+- Overall direction call for today: **UP** or **DOWN** (or SIDEWAYS if truly unclear).
+- Key supporting reasons (price level, trend, macro drivers relevant to today).
 - Confidence level: High / Medium / Low.
 - List source links used.
 
@@ -75,29 +85,36 @@ Report structure:
 ```
 # Thailand Gold Price Outlook — YYYY-MM-DD
 
-## Summary
-**Direction: UP / DOWN / SIDEWAYS** | Confidence: High/Medium/Low
+## Today's Prediction
+**Direction: ▲ UP / ▼ DOWN / ➡ SIDEWAYS** | Confidence: High/Medium/Low
 
-<one-paragraph summary>
+<one-paragraph summary of what gold is expected to do TODAY and why>
+
+## Agent Performance (Past 3 Days)
+| Day | Date | My Prediction | Actual Move | Result |
+|---|---|---|---|---|
+| Day-3 | YYYY-MM-DD | UP/DOWN/SIDEWAYS | ▲ UP / ▼ DOWN / ➡ SIDEWAYS / 🏖 Market Closed | ✅/❌/🏖/❓ |
+| Day-2 | YYYY-MM-DD | UP/DOWN/SIDEWAYS | ▲ UP / ▼ DOWN / ➡ SIDEWAYS / 🏖 Market Closed | ✅/❌/🏖/❓ |
+| Day-1 | YYYY-MM-DD | UP/DOWN/SIDEWAYS | ▲ UP / ▼ DOWN / ➡ SIDEWAYS / 🏖 Market Closed | ✅/❌/🏖/❓ |
 
 ## Price Alignment (Yesterday)
 | Metric | Value | Change |
 |---|---|---|
-| Thailand gold (บาทละ) | … | ▲/▼ … |
-| Global spot XAU/USD | … | ▲/▼ … |
-| Alignment | Yes / No | |
+| Thailand gold (บาทละ) | … | ▲/▼ … or 🏖 Market Closed |
+| Global spot XAU/USD | … | ▲/▼ … or 🏖 Market Closed |
+| Alignment | Yes / No / N/A | |
 
 ## Source Views
 ### 1. YLG Bullion
-- Today's view: …
-- 3-day accuracy: Day-3 ✅/❌/❓ · Day-2 ✅/❌/❓ · Day-1 ✅/❌/❓
+- Today's prediction: …
+- 3-day accuracy: Day-3 ✅/❌/🏖/❓ · Day-2 ✅/❌/🏖/❓ · Day-1 ✅/❌/🏖/❓
 
 ### 2. Gold Traders Association of Thailand
-- Today's view: …
+- Today's prediction: …
 - 3-day accuracy: …
 
 ### 3. <Global source name>
-- Today's view: …
+- Today's prediction: …
 - 3-day accuracy: …
 
 ## Key Reasons
@@ -124,11 +141,13 @@ Report the final push status to the user.
 
 Build the `<summary>` text (≤ 500 characters) using this template:
 ```
-🪙 Thailand Gold Outlook YYYY-MM-DD
+🪙 Thailand Gold — Today's Prediction YYYY-MM-DD
 Direction: ▲ UP / ▼ DOWN / ➡ SIDEWAYS
 Confidence: High/Medium/Low
 
-<2-3 sentence reason>
+<2-3 sentence reason focused on what gold will do TODAY>
+
+Agent accuracy (last 3 days): ✅/❌/🏖 · ✅/❌/🏖 · ✅/❌/🏖
 
 Sources: YLG · GTA · <global>
 ```
