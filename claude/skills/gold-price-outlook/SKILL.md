@@ -124,20 +124,13 @@ Report structure:
 - [Source name](URL)
 ```
 
-**4b — Commit and push the report**
+**4b — Write the report file to disk**
 
-Stage only the new report file, commit, then push immediately so the report
-is not lost if the session ends:
-```
-git add reports/YYYY-MM-DD.md
-git commit -m "report: gold price outlook YYYY-MM-DD"
-git push origin main
-```
+Write the completed report content to `reports/YYYY-MM-DD.md` using the Write
+tool (or equivalent file-write). Do NOT run any git commands manually — the
+script in step 4c handles commit, push, and LINE in one call.
 
-If the push fails, retry up to 3 times with a short wait between attempts.
-Report the final push status to the user.
-
-**4c — Send LINE notification**
+**4c — Commit, push, and send LINE notification**
 
 Build the `<summary>` text (≤ 500 characters) using this template:
 ```
@@ -152,17 +145,17 @@ Agent accuracy (last 3 days): ✅/❌/🏖 · ✅/❌/🏖 · ✅/❌/🏖
 Sources: YLG · GTA · <global>
 ```
 
-Then run the helper script in this skill folder:
+Then run this single command — it commits and pushes the report file AND sends
+the LINE notification in one step:
 ```
-python3 claude/skills/gold-price-outlook/send_line.py "<summary>"
+python3 claude/skills/gold-price-outlook/send_line.py "<summary>" --report-file reports/YYYY-MM-DD.md
 ```
 
-The script (`send_line.py`) reads `LINE_ACCESS_TOKEN` and `LINE_USER_ID` from
-environment variables and POSTs to `https://api.line.me/v2/bot/message/push`
-using Python's `urllib.request` (no external dependencies). It prints the LINE
-API response status and exits non-zero on failure.
+The script will:
+1. `git add` the report file, commit it, and push to `origin/main` (retries up to 3×).
+2. POST the summary to LINE via `https://api.line.me/v2/bot/message/push`.
 
-If `LINE_ACCESS_TOKEN` or `LINE_USER_ID` are not set, the script will print an
-error to stderr and exit 1. In that case print a warning but do NOT skip the
-rest of the workflow — still write and commit the report.
+It reads `LINE_ACCESS_TOKEN` and `LINE_USER_ID` from environment variables.
+If those are missing, the git commit+push still runs and an error is printed
+for the LINE step — the report is never lost.
 </instructions>
