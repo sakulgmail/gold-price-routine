@@ -200,6 +200,10 @@ Where `<change detail>` is a short note like `+850 baht to 63,900` or `−1,300 
 Keep technical terms that are clearer in English (XAU/USD, DXY, FOMC, NFP,
 Fed) as-is inside the Thai text — translate the explanation, not the jargon.
 
+In the LINE message, write Thai gold prices as e.g. `65,400 บาท` — use the
+word `บาท` only, never `บาทละ`. (The full unit `บาทละ` is fine in the Markdown
+report, just not in the LINE message.)
+
 Then run this single command — it commits and pushes the report file AND sends
 the LINE notification in one step:
 ```
