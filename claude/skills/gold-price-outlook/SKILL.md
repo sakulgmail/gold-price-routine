@@ -20,12 +20,13 @@ Never hardcode these values. Never write them to a `.env` file.
 1. **RESEARCH** — Searches the web for today's Thailand gold price prediction/outlook (YLG, Gold Traders Association, major Thai financial news).
 2. **ANALYZE**
    - Compares yesterday's Thailand gold price vs yesterday's global (spot XAU/USD) price and states whether they moved in alignment.
+   - Checks the leading signals: overnight global XAU/USD move since the Thai close, USD/THB direction, and today's macro calendar.
    - Pulls views from 3 well-known gold sources (mix of global and Thai).
    - Checks whether each source's predictions over the past 3 days were correct.
-3. **SYNTHESIZE** — Concludes whether gold today is likely to go UP or DOWN with concise reasons and reference links.
+3. **SYNTHESIZE** — Concludes whether gold today is likely to go UP or DOWN, weighting the overnight global move highest and each source by its recent accuracy.
 4. **DELIVER**
    - Writes a dated Markdown report to `reports/YYYY-MM-DD.md` and commits it.
-   - Sends a LINE push notification via a direct HTTPS POST (no shell script).
+   - Sends a LINE push notification with four sections (Prediction, Agent Performance, Source Views, Key Reasons); Source Views and Key Reasons are written in Thai.
 
 ## Skill instructions
 
@@ -50,6 +51,20 @@ Record every source URL you find.
 - State explicitly: did they move in the same direction vs the day before?
 - If yesterday was a market holiday or weekend, note "Market Closed" instead of a price.
 
+**Leading-signal check (strongest predictors — check these BEFORE reading opinions)**
+Thailand's GTA price is largely a mechanical function of two inputs. Check both:
+1. **Overnight global move** — what has XAU/USD done since yesterday's Thai close
+   (~17:30 Bangkok time)? The Thai open almost always gaps in the direction of the
+   overnight global move. Record the current live spot level and % change vs the
+   level at yesterday's Thai close.
+2. **USD/THB direction** — a strengthening baht offsets global gains (and vice
+   versa). Record today's USD/THB level and direction vs yesterday.
+
+Also check **today's macro calendar** (Bangkok time): FOMC decision/minutes, NFP,
+CPI, major Fed speakers, or significant geopolitical events scheduled today. A
+high-impact event landing during or after Thai trading hours can invalidate a
+morning call — if one is scheduled, note it and lower confidence one notch.
+
 **Three-source view collection**
 Collect each source's prediction for **today** (not the coming week) — at least one Thai, at least one global:
 1. YLG Bullion (Thai) — https://ylg.co.th
@@ -69,6 +84,19 @@ If a report file does not exist for a given day (e.g. weekend or missed run), ma
 ### Phase 3 — SYNTHESIZE
 
 The direction call must answer: **"What will Thailand gold do TODAY (YYYY-MM-DD)?"**
+
+Combine the signals in this priority order:
+1. **Overnight global XAU/USD move since yesterday's Thai close** — the single
+   strongest predictor of the Thai session's direction. Weight it highest.
+2. **USD/THB direction** — adjust the global signal for baht strength/weakness.
+3. **Source consensus, weighted by trailing accuracy** — weight each source's view
+   by its own 3-day accuracy record from Phase 2. A source that has been wrong
+   3 days running should barely move the needle; a source that has been right
+   3 days running deserves real weight. Ignore week-ahead views when making a
+   today-only call unless nothing fresher exists.
+4. **Macro calendar risk** — if a high-impact event lands during/after Thai hours
+   today, cap confidence at Medium.
+
 Write a SHORT conclusion (≤ 5 bullet points):
 - Overall direction call for today: **UP** or **DOWN** (or SIDEWAYS if truly unclear).
 - Key supporting reasons (price level, trend, macro drivers relevant to today).
@@ -132,9 +160,14 @@ script in step 4c handles commit, push, and LINE in one call.
 
 **4c — Commit, push, and send LINE notification**
 
-Build the `<summary>` text (≤ 1000 characters) using this template:
+Build the `<summary>` text (≤ 4,500 characters — LINE's hard limit per text
+message is 5,000) using this template. It mirrors the report's four main
+sections. **The 🔍 Source Views and 💡 Key Reasons sections must be written in
+Thai**; the rest stays in English:
 ```
 🪙 Thailand Gold — Today's Prediction YYYY-MM-DD
+
+📌 Today's Prediction
 Direction: ▲ UP / ▼ DOWN / ➡ SIDEWAYS
 Confidence: High/Medium/Low
 
@@ -145,10 +178,27 @@ Day-3 YYYY-MM-DD: Predicted <UP/DOWN/SIDEWAYS> → Actual <▲ UP / ▼ DOWN / �
 Day-2 YYYY-MM-DD: Predicted <UP/DOWN/SIDEWAYS> → Actual <▲ UP / ▼ DOWN / ➡ SIDEWAYS / 🏖> (<change detail>) <✅/❌/🏖>
 Day-1 YYYY-MM-DD: Predicted <UP/DOWN/SIDEWAYS> → Actual <▲ UP / ▼ DOWN / ➡ SIDEWAYS / 🏖> (<change detail>) <✅/❌/🏖>
 
+🔍 มุมมองจากแหล่งข่าว
+1) YLG Bullion: <สรุปคาดการณ์วันนี้ 1-2 บรรทัด เป็นภาษาไทย>
+   ความแม่นยำ 3 วัน: <✅/❌/🏖/❓> <✅/❌/🏖/❓> <✅/❌/🏖/❓>
+2) สมาคมค้าทองคำ: <สรุป 1-2 บรรทัด เป็นภาษาไทย>
+   ความแม่นยำ 3 วัน: <✅/❌/🏖/❓> <✅/❌/🏖/❓> <✅/❌/🏖/❓>
+3) <ชื่อแหล่งข่าวต่างประเทศ>: <สรุป 1-2 บรรทัด เป็นภาษาไทย>
+   ความแม่นยำ 3 วัน: <✅/❌/🏖/❓> <✅/❌/🏖/❓> <✅/❌/🏖/❓>
+
+💡 เหตุผลสำคัญ
+• <เหตุผลข้อ 1 เป็นภาษาไทย>
+• <เหตุผลข้อ 2 เป็นภาษาไทย>
+• <เหตุผลข้อ 3 เป็นภาษาไทย>
+(3-5 ข้อ แปลจาก Key Reasons ในรายงาน — เขียนให้กระชับ อ่านง่ายบนมือถือ)
+
 Sources: YLG · GTA · <global>
 ```
 
 Where `<change detail>` is a short note like `+850 baht to 63,900` or `−1,300 baht to 63,050` or `Market Closed`.
+
+Keep technical terms that are clearer in English (XAU/USD, DXY, FOMC, NFP,
+Fed) as-is inside the Thai text — translate the explanation, not the jargon.
 
 Then run this single command — it commits and pushes the report file AND sends
 the LINE notification in one step:

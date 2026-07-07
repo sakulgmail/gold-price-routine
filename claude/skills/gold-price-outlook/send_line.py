@@ -59,9 +59,19 @@ def git_commit_and_push(report_file: str) -> None:
     raise RuntimeError("Git push failed after 3 attempts.")
 
 
+LINE_MAX_CHARS = 5000  # LINE Messaging API hard limit per text message
+
+
 def send_line(text: str) -> None:
     token = os.environ.get("LINE_ACCESS_TOKEN")
     user_id = os.environ.get("LINE_USER_ID")
+
+    if len(text) > LINE_MAX_CHARS:
+        print(
+            f"WARNING: message is {len(text)} chars, truncating to {LINE_MAX_CHARS}.",
+            file=sys.stderr,
+        )
+        text = text[: LINE_MAX_CHARS - 1] + "…"
 
     missing = [v for v, val in [("LINE_ACCESS_TOKEN", token), ("LINE_USER_ID", user_id)] if not val]
     if missing:
