@@ -41,10 +41,11 @@ def git_commit_and_push(report_file: str) -> None:
     run(["git", "add", report_file])
     run(["git", "commit", "-m", commit_msg])
 
-    # Retry push up to 3 times
+    # Retry push up to 3 times. Push current HEAD to origin/main explicitly,
+    # since the checked-out local branch is not always named "main".
     for attempt in range(1, 4):
         result = subprocess.run(
-            ["git", "push", "origin", "main"],
+            ["git", "push", "origin", "HEAD:main"],
             cwd=repo_root,
             capture_output=True,
             text=True,
